@@ -29,7 +29,6 @@ ElimuBuddy is a **Kenyan AI + Human hybrid study platform** that helps learners,
 
 **Dev & Debug Tools:**
 
-* **Lovable** → Prompt engineering & project scaffolding
 * **Cursor AI** → Backend generation
 * **DeepSeek & ChatGPT** → Debugging and code optimization
 
@@ -183,9 +182,8 @@ The following prompt was generated in ChatGPT and then fed into **Lovable** for 
 >
 > *No placeholders, fake testimonials, or fake pricing. Ensure accessibility.*
 
-### 2. Application Generation (Lovable)
+### 2. Application Generation
 
-* Prompt fed into **Lovable** → full MERN stack scaffold
 * Backend generated using **Cursor AI**
 * Debugged and refined using **DeepSeek** & **ChatGPT**
 * Iterative adjustments to fully implement CBC curriculum coverage

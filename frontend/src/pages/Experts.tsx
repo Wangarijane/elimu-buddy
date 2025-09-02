@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,116 +9,58 @@ import Header from "@/components/Header";
 
 const Experts = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSubject, setSelectedSubject] = useState('');
-  const [selectedLevel, setSelectedLevel] = useState('');
+  const [selectedSubject, setSelectedSubject] = useState('ALL');
+  const [selectedLevel, setSelectedLevel] = useState('ALL');
 
-  const experts = [
-    {
-      id: 1,
-      name: "Dkt. Mary Wanjiku",
-      title: "Mtaalamu wa Hisabati",
-      subjects: ["Hisabati", "Sayansi"],
-      levels: ["Daraja 4-6", "Daraja 7-9"],
-      rating: 4.9,
-      reviews: 127,
-      responseTime: "2 masaa",
-      experience: "8 miaka",
-      languages: ["Kiswahili", "Kiingereza"],
-      price: "KSh 150-300",
-      avatar: "👩‍🏫",
-      online: true,
-      verified: true
-    },
-    {
-      id: 2,
-      name: "Mwalimu John Mwangi",
-      title: "Mtaalamu wa Kiswahili",
-      subjects: ["Kiswahili", "Masomo ya Kijamii"],
-      levels: ["Daraja 1-3", "Daraja 4-6"],
-      rating: 4.8,
-      reviews: 98,
-      responseTime: "1 saa",
-      experience: "12 miaka",
-      languages: ["Kiswahili"],
-      price: "KSh 100-250",
-      avatar: "👨‍🏫",
-      online: false,
-      verified: true
-    },
-    {
-      id: 3,
-      name: "Dr. Sarah Adhiambo",
-      title: "Mtaalamu wa Sayansi",
-      subjects: ["Sayansi", "Kemistri", "Fizikia"],
-      levels: ["Daraja 7-9", "Daraja 10-12"],
-      rating: 5.0,
-      reviews: 89,
-      responseTime: "30 dakika",
-      experience: "6 miaka",
-      languages: ["Kiingereza", "Kiswahili"],
-      price: "KSh 200-400",
-      avatar: "👩‍🔬",
-      online: true,
-      verified: true
-    },
-    {
-      id: 4,
-      name: "Mwalimu Grace Kemunto",
-      title: "Mtaalamu wa Lugha za Kigeni",
-      subjects: ["Kiingereza", "Sanaa za Ubunifu"],
-      levels: ["PP1-PP2", "Daraja 1-3"],
-      rating: 4.7,
-      reviews: 156,
-      responseTime: "45 dakika",
-      experience: "10 miaka",
-      languages: ["Kiingereza", "Kiswahili"],
-      price: "KSh 120-280",
-      avatar: "👩‍🎨",
-      online: true,
-      verified: true
-    },
-    {
-      id: 5,
-      name: "Prof. David Kiprotich",
-      title: "Mtaalamu wa Historia",
-      subjects: ["Historia", "Jiografia", "Masomo ya Kijamii"],
-      levels: ["Daraja 7-9", "Daraja 10-12"],
-      rating: 4.9,
-      reviews: 203,
-      responseTime: "1.5 masaa",
-      experience: "15 miaka",
-      languages: ["Kiswahili", "Kiingereza"],
-      price: "KSh 180-350",
-      avatar: "👨‍💼",
-      online: false,
-      verified: true
-    },
-    {
-      id: 6,
-      name: "Bi. Fatuma Hassan",
-      title: "Mtaalamu wa Elimu ya Awali",
-      subjects: ["Shughuli za Mazingira", "Shughuli za Kihesabu"],
-      levels: ["PP1-PP2"],
-      rating: 4.8,
-      reviews: 92,
-      responseTime: "20 dakika",
-      experience: "7 miaka",
-      languages: ["Kiswahili", "Kiarabu"],
-      price: "KSh 100-200",
-      avatar: "👩‍🏫",
-      online: true,
-      verified: true
-    }
-  ];
+  const [experts, setExperts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const subjects = ["Hisabati", "Kiswahili", "Kiingereza", "Sayansi", "Historia", "Jiografia", "Sanaa za Ubunifu"];
-  const levels = ["PP1-PP2", "Daraja 1-3", "Daraja 4-6", "Daraja 7-9", "Daraja 10-12"];
+  useEffect(() => {
+    const fetchExperts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const urlBase = import.meta.env.VITE_API_URL_PROD || import.meta.env.VITE_API_URL_LOCAL;
+        const params = new URLSearchParams();
+        if (selectedSubject !== 'ALL') params.append('subject', selectedSubject);
+        if (selectedLevel !== 'ALL') params.append('grade', selectedLevel);
+        const res = await fetch(`${urlBase}/experts/browse?${params.toString()}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Failed to load experts');
+        setExperts((data.data?.experts || []).map((e: any) => ({
+          id: e._id,
+          name: `${e.profile?.firstName || ''} ${e.profile?.lastName || ''}`.trim(),
+          title: e.profile?.expertise?.title || 'Subject Expert',
+          subjects: e.profile?.expertise?.subjects || [],
+          levels: e.profile?.expertise?.grades || [],
+          rating: e.profile?.expertise?.rating || 0,
+          reviews: e.profile?.expertise?.totalRatings || 0,
+          responseTime: e.profile?.expertise?.averageResponseTime ? `${e.profile.expertise.averageResponseTime} min` : '—',
+          experience: e.profile?.expertise?.experience || '',
+          languages: e.profile?.languages || [],
+          price: e.profile?.expertise?.priceRange || '',
+          avatar: e.profile?.avatar || '👩‍🏫',
+          online: e.profile?.expertise?.online || false,
+          verified: true
+        })));
+      } catch (err: any) {
+        setError(err.message || 'Failed to load experts');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchExperts();
+  }, [selectedSubject, selectedLevel]);
+
+  const subjects = ["Mathematics", "Kiswahili", "English", "Science", "History", "Geography", "Creative Arts"];
+  const levels = ["PP1-PP2", "Grade 1-3", "Grade 4-6", "Grade 7-9", "Grade 10-12"];
 
   const filteredExperts = experts.filter(expert => {
     const matchesSearch = expert.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         expert.subjects.some(subject => subject.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesSubject = !selectedSubject || expert.subjects.includes(selectedSubject);
-    const matchesLevel = !selectedLevel || expert.levels.includes(selectedLevel);
+                         expert.subjects.some((subject: string) => subject.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesSubject = selectedSubject === 'ALL' || expert.subjects.includes(selectedSubject);
+    const matchesLevel = selectedLevel === 'ALL' || expert.levels.includes(selectedLevel);
 
     return matchesSearch && matchesSubject && matchesLevel;
   });
@@ -130,14 +72,14 @@ const Experts = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold mb-4">
-            Wataalamu wa{" "}
+            Experts in{" "}
             <span className="bg-gradient-kenya bg-clip-text text-transparent">
               CBC
             </span>
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Unganishwa na walimu na wataalamu halisi wanaoweza kukusaidia na maswali yako magumu. 
-            Chagua mtaalamu unayetaka kuongea naye.
+            Connect with real teachers and experts who can help you with tough questions. 
+            Choose an expert to chat with.
           </p>
         </div>
 
@@ -146,7 +88,7 @@ const Experts = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Filter className="h-5 w-5" />
-              Tafuta Mtaalamu
+              Find an Expert
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -154,31 +96,31 @@ const Experts = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Tafuta kwa jina au somo..."
+                  placeholder="Search by name or subject..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
               
-              <Select onValueChange={setSelectedSubject}>
+              <Select value={selectedSubject} onValueChange={setSelectedSubject}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Chagua Somo" />
+                  <SelectValue placeholder="Choose Subject" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Masomo Yote</SelectItem>
+                  <SelectItem value="ALL">All Subjects</SelectItem>
                   {subjects.map(subject => (
                     <SelectItem key={subject} value={subject}>{subject}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
 
-              <Select onValueChange={setSelectedLevel}>
+              <Select value={selectedLevel} onValueChange={setSelectedLevel}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Chagua Kiwango" />
+                  <SelectValue placeholder="Choose Level" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Viwango Vyote</SelectItem>
+                  <SelectItem value="ALL">All Levels</SelectItem>
                   {levels.map(level => (
                     <SelectItem key={level} value={level}>{level}</SelectItem>
                   ))}
@@ -196,7 +138,7 @@ const Experts = () => {
                 <Users className="h-8 w-8 text-primary" />
                 <div>
                   <div className="text-2xl font-bold">{experts.length}</div>
-                  <div className="text-sm text-muted-foreground">Wataalamu</div>
+                  <div className="text-sm text-muted-foreground">Experts</div>
                 </div>
               </div>
             </CardContent>
@@ -208,7 +150,7 @@ const Experts = () => {
                 <Clock className="h-8 w-8 text-education" />
                 <div>
                   <div className="text-2xl font-bold">45min</div>
-                  <div className="text-sm text-muted-foreground">Wastani wa Majibu</div>
+                  <div className="text-sm text-muted-foreground">Avg Response</div>
                 </div>
               </div>
             </CardContent>
@@ -220,7 +162,7 @@ const Experts = () => {
                 <Star className="h-8 w-8 text-success" />
                 <div>
                   <div className="text-2xl font-bold">4.8</div>
-                  <div className="text-sm text-muted-foreground">Kiwango cha Juu</div>
+                  <div className="text-sm text-muted-foreground">Top Rating</div>
                 </div>
               </div>
             </CardContent>
@@ -232,7 +174,7 @@ const Experts = () => {
                 <MessageCircle className="h-8 w-8 text-secondary" />
                 <div>
                   <div className="text-2xl font-bold">1,247</div>
-                  <div className="text-sm text-muted-foreground">Maswali Yamejibiwa</div>
+                  <div className="text-sm text-muted-foreground">Questions Answered</div>
                 </div>
               </div>
             </CardContent>
@@ -240,13 +182,19 @@ const Experts = () => {
         </div>
 
         {/* Experts Grid */}
+        {error && (
+          <div className="text-center text-destructive mb-4">{error}</div>
+        )}
+        {loading ? (
+          <div className="text-center py-12">Loading experts...</div>
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredExperts.map((expert) => (
+          {filteredExperts.map((expert: any) => (
             <Card key={expert.id} className="hover:shadow-soft transition-shadow duration-300">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="text-4xl">{expert.avatar}</div>
+                    <div className="text-4xl">{expert.avatar || '👩‍🏫'}</div>
                     <div>
                       <CardTitle className="text-lg flex items-center gap-2">
                         {expert.name}
@@ -266,9 +214,9 @@ const Experts = () => {
               <CardContent className="space-y-4">
                 {/* Subjects */}
                 <div>
-                  <div className="text-sm font-medium mb-2">Masomo:</div>
+                  <div className="text-sm font-medium mb-2">Subjects:</div>
                   <div className="flex flex-wrap gap-1">
-                    {expert.subjects.map((subject, index) => (
+                    {expert.subjects.map((subject: string, index: number) => (
                       <Badge key={index} variant="outline" className="text-xs">
                         {subject}
                       </Badge>
@@ -278,9 +226,9 @@ const Experts = () => {
 
                 {/* Levels */}
                 <div>
-                  <div className="text-sm font-medium mb-2">Viwango:</div>
+                  <div className="text-sm font-medium mb-2">Levels:</div>
                   <div className="flex flex-wrap gap-1">
-                    {expert.levels.map((level, index) => (
+                    {expert.levels.map((level: string, index: number) => (
                       <Badge key={index} variant="secondary" className="text-xs">
                         {level}
                       </Badge>
@@ -303,26 +251,27 @@ const Experts = () => {
 
                 {/* Languages and Experience */}
                 <div className="text-sm text-muted-foreground">
-                  <div>Uzoefu: {expert.experience}</div>
-                  <div>Lugha: {expert.languages.join(', ')}</div>
+                  <div>Experience: {expert.experience}</div>
+                  <div>Languages: {expert.languages.join(', ')}</div>
                   <div className="font-medium text-foreground">{expert.price}</div>
                 </div>
 
                 {/* Action Button */}
                 <Button variant="kenya" className="w-full">
-                  Ongea na {expert.name.split(' ')[0]}
+                  Chat with {expert.name.split(' ')[0]}
                 </Button>
               </CardContent>
             </Card>
           ))}
         </div>
+        )}
 
         {filteredExperts.length === 0 && (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold mb-2">Hakuna Matokeo</h3>
+            <h3 className="text-xl font-semibold mb-2">No Results</h3>
             <p className="text-muted-foreground">
-              Hakuna wataalamu wanaofaa vigezo vyako vya utafutaji. Jaribu kubadilisha vigezo vyako.
+              No experts match your filters. Try adjusting your criteria.
             </p>
           </div>
         )}

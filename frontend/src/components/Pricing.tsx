@@ -7,38 +7,38 @@ import { Link } from "react-router-dom";
 const Pricing = () => {
   const plans = [
     {
-      name: "Bure",
+      name: "Free",
       price: "0",
-      period: "kwa mwezi",
-      description: "Kwa wanafunzi wanaotaka kuanza tu",
+      period: "per month",
+      description: "For learners getting started",
       features: [
-        "Maswali 5 ya AI kwa siku",
-        "Masomo yote ya CBC",
-        "Msaada wa lugha mbili",
-        "Mazingira salama ya kujifunza"
+        "5 AI questions per day",
+        "All CBC subjects",
+        "Bilingual support",
+        "Safe learning environment"
       ],
       popular: false,
-      buttonText: "Anza Bure",
+      buttonText: "Start Free",
       buttonVariant: "outline" as const,
       icon: Star,
       color: "text-muted-foreground",
       bgColor: "bg-card"
     },
     {
-      name: "Msingi",
+      name: "Basic",
       price: "300",
-      period: "kwa mwezi",
-      description: "Kwa wanafunzi wa kawaida",
+      period: "per month",
+      description: "For regular learners",
       features: [
-        "Maswali 50 ya AI kwa siku",
-        "Upatikanaji wa vikundi vya kusoma",
-        "Masomo yote ya CBC",
-        "Msaada wa lugha mbili",
-        "Majibu ya haraka",
-        "Ufuatiliaji wa maendeleo"
+        "50 AI questions per day",
+        "Study group access",
+        "All CBC subjects",
+        "Bilingual support",
+        "Faster responses",
+        "Progress tracking"
       ],
       popular: true,
-      buttonText: "Chagua Msingi",
+      buttonText: "Choose Basic",
       buttonVariant: "kenya" as const,
       icon: Zap,
       color: "text-primary",
@@ -47,39 +47,39 @@ const Pricing = () => {
     {
       name: "Premium",
       price: "500",
-      period: "kwa mwezi",
-      description: "Kwa wanafunzi wazuri",
+      period: "per month",
+      description: "For power learners",
       features: [
-        "Maswali yasiyo na kikomo ya AI",
-        "Uwekwaji wa kwanza wa wataalamu",
-        "Vikundi vya kusoma",
-        "Mazungumzo ya moja kwa moja na wataalamu",
-        "Ripoti za kina za maendeleo",
-        "Msaada wa haraka zaidi"
+        "Unlimited AI questions",
+        "Priority expert matching",
+        "Study groups",
+        "Direct chats with experts",
+        "Detailed progress reports",
+        "Fastest support"
       ],
       popular: false,
-      buttonText: "Chagua Premium",
+      buttonText: "Choose Premium",
       buttonVariant: "secondary" as const,
       icon: Star,
       color: "text-secondary",
       bgColor: "bg-secondary/5 border-secondary/20"
     },
     {
-      name: "Familia",
+      name: "Family",
       price: "1,500",
-      period: "kwa mwezi",
-      description: "Kwa familia zenye watoto 5",
+      period: "per month",
+      description: "For families up to 5 learners",
       features: [
-        "Akaunti 5 za wanafunzi",
-        "Maswali yasiyo na kikomo ya AI",
-        "Uwekwaji wa kwanza wa wataalamu",
-        "Dashboard ya wazazi",
-        "Ripoti za familia",
-        "Msaada wa mzazi 24/7",
-        "Makubaliano ya kifamilia"
+        "5 student accounts",
+        "Unlimited AI questions",
+        "Priority expert matching",
+        "Parent dashboard",
+        "Family reports",
+        "24/7 parent support",
+        "Family agreements"
       ],
       popular: false,
-      buttonText: "Chagua Familia",
+      buttonText: "Choose Family",
       buttonVariant: "education" as const,
       icon: Users,
       color: "text-education",
@@ -92,13 +92,13 @@ const Pricing = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Bei{" "}
+            Affordable {" "}
             <span className="bg-gradient-kenya bg-clip-text text-transparent">
-              Nafuu
+              Pricing
             </span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Tumechagua bei za ukweli ili kila mwanafunzi apate nafasi ya kujifunza. Malipo kwa njia ya M-Pesa.
+            Fair pricing so every learner can access quality education. M-Pesa supported.
           </p>
         </div>
 
@@ -112,7 +112,7 @@ const Pricing = () => {
               >
                 {plan.popular && (
                   <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground">
-                    Maarufu Zaidi
+                    Most Popular
                   </Badge>
                 )}
                 
@@ -152,13 +152,13 @@ const Pricing = () => {
         </div>
 
         <div className="text-center bg-card rounded-lg p-8 shadow-soft">
-          <h3 className="text-xl font-semibold mb-4">Wataalamu wa Binadamu</h3>
+          <h3 className="text-xl font-semibold mb-4">Human Experts</h3>
           <p className="text-muted-foreground mb-4">
-            Wataalamu wanajibu maswali kulingana na ugumu na bajeti ya mzazi. 
-            Kiwango cha chini ni KSh 50 kwa jibu.
+            Experts answer questions based on complexity and your budget. 
+            Minimum KSh 50 per answer.
           </p>
           <Button variant="outline" asChild>
-            <Link to="/experts">Jifunze Zaidi kuhusu Wataalamu</Link>
+            <Link to="/experts">Learn More about Experts</Link>
           </Button>
         </div>
       </div>

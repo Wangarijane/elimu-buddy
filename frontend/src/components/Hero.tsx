@@ -18,26 +18,25 @@ const Hero = () => {
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center text-white">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            Rafiki Wako wa Kujifunza{" "}
+            Your AI Learning Buddy {" "}
             <span className="bg-gradient-education bg-clip-text text-transparent">
               CBC
             </span>
           </h1>
           
           <p className="text-xl md:text-2xl mb-8 text-white/90 max-w-3xl mx-auto">
-            ElimuBuddy ni msaidizi wako wa kujifunza unayeunganisha teknolojia ya AI na wataalamu wa binadamu 
-            ili kukusaidia kufanikiwa katika mfumo wa CBC wa Kenya.
+            ElimuBuddy blends AI and human experts to help Kenyan learners succeed in the CBC curriculum.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button variant="hero" asChild>
               <Link to="/chat" className="group">
-                Anza Kujifunza Sasa
+                Start Learning Now
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Link>
             </Button>
             <Button variant="outline" size="lg" className="border-white/30 text-white hover:bg-white hover:text-accent" asChild>
-              <Link to="/subjects">Angalia Masomo</Link>
+              <Link to="/subjects">Browse Subjects</Link>
             </Button>
           </div>
 
@@ -48,28 +47,28 @@ const Hero = () => {
                 <BookOpen className="h-8 w-8 text-education" />
               </div>
               <div className="text-2xl font-bold">13</div>
-              <div className="text-sm text-white/80">Miaka ya Elimu</div>
+              <div className="text-sm text-white/80">Years of Education</div>
             </div>
             <div className="text-center">
               <div className="flex justify-center mb-2">
                 <Brain className="h-8 w-8 text-education" />
               </div>
               <div className="text-2xl font-bold">50+</div>
-              <div className="text-sm text-white/80">Masomo</div>
+              <div className="text-sm text-white/80">Subjects</div>
             </div>
             <div className="text-center">
               <div className="flex justify-center mb-2">
                 <Users className="h-8 w-8 text-education" />
               </div>
               <div className="text-2xl font-bold">200+</div>
-              <div className="text-sm text-white/80">Wataalamu</div>
+              <div className="text-sm text-white/80">Experts</div>
             </div>
             <div className="text-center">
               <div className="flex justify-center mb-2">
                 <Zap className="h-8 w-8 text-education" />
               </div>
               <div className="text-2xl font-bold">24/7</div>
-              <div className="text-sm text-white/80">Msaada</div>
+              <div className="text-sm text-white/80">Support</div>
             </div>
           </div>
         </div>

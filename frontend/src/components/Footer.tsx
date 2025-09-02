@@ -7,37 +7,37 @@ const Footer = () => {
     {
       title: "ElimuBuddy",
       links: [
-        { name: "Kuhusu", href: "/about" },
-        { name: "Jinsi inavyofanya kazi", href: "/how-it-works" },
-        { name: "Bei", href: "#pricing" },
-        { name: "Mawasiliano", href: "/contact" }
+        { name: "About", href: "/about" },
+        { name: "How it works", href: "/how-it-works" },
+        { name: "Pricing", href: "#pricing" },
+        { name: "Contact", href: "/contact" }
       ]
     },
     {
-      title: "Masomo",
+      title: "Subjects",
       links: [
-        { name: "Elimu ya Awali (PP1-PP2)", href: "/subjects/pre-primary" },
-        { name: "Msingi wa Chini (1-3)", href: "/subjects/lower-primary" },
-        { name: "Msingi wa Juu (4-6)", href: "/subjects/upper-primary" },
-        { name: "Sekondari ya Chini (7-9)", href: "/subjects/junior-secondary" },
-        { name: "Sekondari ya Juu (10-12)", href: "/subjects/senior-secondary" }
+        { name: "Early Years (PP1-PP2)", href: "/subjects/pre-primary" },
+        { name: "Lower Primary (1-3)", href: "/subjects/lower-primary" },
+        { name: "Upper Primary (4-6)", href: "/subjects/upper-primary" },
+        { name: "Junior Secondary (7-9)", href: "/subjects/junior-secondary" },
+        { name: "Senior Secondary (10-12)", href: "/subjects/senior-secondary" }
       ]
     },
     {
-      title: "Msaada",
+      title: "Support",
       links: [
-        { name: "Kituo cha Msaada", href: "/help" },
-        { name: "Maswali Yanayoulizwa Mara kwa Mara", href: "/faq" },
-        { name: "Miongozo ya Wazazi", href: "/parent-guide" },
-        { name: "Miongozo ya Wataalamu", href: "/expert-guide" }
+        { name: "Help Center", href: "/help" },
+        { name: "Frequently Asked Questions", href: "/faq" },
+        { name: "Parent Guides", href: "/parent-guide" },
+        { name: "Expert Guides", href: "/expert-guide" }
       ]
     },
     {
-      title: "Sheria",
+      title: "Legal",
       links: [
-        { name: "Sera ya Faragha", href: "/privacy" },
-        { name: "Masharti ya Matumizi", href: "/terms" },
-        { name: "Sera ya Kurudisha Pesa", href: "/refund-policy" }
+        { name: "Privacy Policy", href: "/privacy" },
+        { name: "Terms of Use", href: "/terms" },
+        { name: "Refund Policy", href: "/refund-policy" }
       ]
     }
   ];
@@ -58,8 +58,8 @@ const Footer = () => {
               <span className="text-xl font-bold text-white">ElimuBuddy</span>
             </Link>
             <p className="text-accent-foreground/80 mb-6 max-w-sm">
-              Rafiki wako wa kujifunza unayeunganisha teknolojia ya AI na wataalamu wa binadamu 
-              ili kukusaidia kufanikiwa katika mfumo wa CBC wa Kenya.
+              Your learning buddy combining AI technology and human experts 
+              to help you succeed in Kenya's CBC system.
             </p>
             
             {/* Contact Info */}
@@ -103,7 +103,7 @@ const Footer = () => {
         <div className="border-t border-accent-foreground/20 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-sm text-accent-foreground/60 mb-4 md:mb-0">
-              © 2024 ElimuBuddy. Haki zote zimehifadhiwa.
+              © 2024 ElimuBuddy. All rights reserved.
             </div>
             
             <div className="flex space-x-4">

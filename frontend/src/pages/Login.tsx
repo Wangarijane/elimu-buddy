@@ -29,7 +29,7 @@ const Login = () => {
     try {
       await login(email, password);
     } catch (error: any) {
-      setError(error.message || "Hitilafu katika kuingia. Tafadhali jaribu tena.");
+      setError(error.message || "Login error. Please try again.");
     }
   };
 
@@ -42,7 +42,7 @@ const Login = () => {
             className="inline-flex items-center text-white hover:text-white/80 transition-colors"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Rudi Nyumbani
+            Back Home
           </Link>
         </div>
 
@@ -55,9 +55,9 @@ const Login = () => {
                 className="h-12 w-12 rounded-lg"
               />
             </div>
-            <CardTitle className="text-2xl font-bold">Karibu Tena!</CardTitle>
+            <CardTitle className="text-2xl font-bold">Welcome Back!</CardTitle>
             <CardDescription className="text-base">
-              Ingia kwenye akaunti yako ya ElimuBuddy ili kuendelea kujifunza
+              Log in to your ElimuBuddy account to continue learning
             </CardDescription>
           </CardHeader>
 
@@ -71,13 +71,13 @@ const Login = () => {
             <form onSubmit={handleLogin} className="space-y-4">
               {/* Email Field */}
               <div className="space-y-2">
-                <Label htmlFor="email">Barua Pepe</Label>
+                <Label htmlFor="email">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="amina@mfano.com"
+                    placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-10"
@@ -89,13 +89,13 @@ const Login = () => {
 
               {/* Password Field */}
               <div className="space-y-2">
-                <Label htmlFor="password">Nenosiri</Label>
+                <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Ingiza nenosiri lako"
+                    placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10 pr-10"
@@ -125,7 +125,7 @@ const Login = () => {
                 className="w-full"
                 disabled={isLoading}
               >
-                {isLoading ? "Ingia..." : "Ingia"}
+                {isLoading ? "Logging in..." : "Login"}
               </Button>
             </form>
 
@@ -133,21 +133,21 @@ const Login = () => {
 
             <div className="text-center space-y-2">
               <p className="text-sm text-muted-foreground">
-                Bado huna akaunti?{" "}
+                Don’t have an account?{" "}
                 <Link
                   to="/signup"
                   className="text-primary hover:underline font-medium"
                 >
-                  Jiunge hapa
+                  Sign up here
                 </Link>
               </p>
               <p className="text-sm text-muted-foreground">
-                Umesahau nenosiri?{" "}
+                Forgot your password?{" "}
                 <Link
                   to="/forgot-password"
                   className="text-primary hover:underline font-medium"
                 >
-                  Pata nenosiri
+                  Recover password
                 </Link>
               </p>
             </div>

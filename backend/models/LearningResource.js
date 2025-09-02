@@ -185,7 +185,6 @@ const learningResourceSchema = new mongoose.Schema({
 // Indexes for better query performance
 learningResourceSchema.index({ title: 1 });
 learningResourceSchema.index({ type: 1 });
-learningResourceSchema.index({ subject: 1 });
 learningResourceSchema.index({ topics: 1 });
 learningResourceSchema.index({ grades: 1 });
 learningResourceSchema.index({ difficulty: 1 });

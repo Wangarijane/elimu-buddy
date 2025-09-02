@@ -164,8 +164,6 @@ const topicSchema = new mongoose.Schema({
 
 // Indexes for better query performance
 topicSchema.index({ name: 1 });
-topicSchema.index({ code: 1 });
-topicSchema.index({ subject: 1 });
 topicSchema.index({ grades: 1 });
 topicSchema.index({ difficulty: 1 });
 topicSchema.index({ status: 1 });

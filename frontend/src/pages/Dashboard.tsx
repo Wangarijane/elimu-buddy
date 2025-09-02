@@ -17,71 +17,68 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
+import { useEffect, useState } from "react";
 
 const Dashboard = () => {
   const { user } = useAuth();
 
-  const stats = [
-    {
-      title: "Maswali ya Wiki Hii",
-      value: "23",
-      change: "+12%",
-      icon: MessageCircle,
-      color: "text-primary"
-    },
-    {
-      title: "Masomo Yaliyokamilika",
-      value: "8",
-      change: "+2",
-      icon: BookOpen,
-      color: "text-education"
-    },
-    {
-      title: "Alama za Wastani",
-      value: "87%",
-      change: "+5%",
-      icon: TrendingUp,
-      color: "text-success"
-    },
-    {
-      title: "Muda wa Kujifunza",
-      value: "12h",
-      change: "+3h",
-      icon: Clock,
-      color: "text-secondary"
-    }
-  ];
+  const [stats, setStats] = useState<Array<{ title: string; value: string; change?: string; icon: any; color: string }>>([
+    { title: "Questions Asked", value: "-", change: "", icon: MessageCircle, color: "text-primary" },
+    { title: "Answers Provided", value: "-", change: "", icon: BookOpen, color: "text-education" },
+    { title: "Subscriptions", value: "-", change: "", icon: TrendingUp, color: "text-success" },
+    { title: "Payments", value: "-", change: "", icon: Clock, color: "text-secondary" }
+  ]);
 
-  const recentActivity = [
-    {
-      action: "Uliuliza swali kuhusu Hisabati ya Daraja la 5",
-      time: "Dakika 2 zilizopita",
-      status: "Imejibiwa"
-    },
-    {
-      action: "Umekamilisha Zoezi la Kiswahili",
-      time: "Saa 1 iliyopita",
-      status: "Imekamilika"
-    },
-    {
-      action: "Umeongea na Mwalimu Mary kuhusu Sayansi",
-      time: "Jana",
-      status: "Imekamilika"
-    },
-    {
-      action: "Umeanza Somo la Historia ya Kenya",
-      time: "Siku 2 zilizopita",
-      status: "Inaendelea"
-    }
-  ];
+  const [recentActivity, setRecentActivity] = useState<Array<{ action: string; time: string; status: string }>>([]);
+  const [subjects, setSubjects] = useState<Array<{ name: string; progress: number; grade: string; color: string }>>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const subjects = [
-    { name: "Hisabati", progress: 75, grade: "B+", color: "bg-primary" },
-    { name: "Kiswahili", progress: 90, grade: "A-", color: "bg-secondary" },
-    { name: "Sayansi", progress: 65, grade: "B", color: "bg-education" },
-    { name: "Kiingereza", progress: 80, grade: "B+", color: "bg-success" },
-    { name: "Masomo ya Kijamii", progress: 70, grade: "B", color: "bg-accent" }
-  ];
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const token = localStorage.getItem('token');
+        const urlBase = import.meta.env.VITE_API_URL_PROD || import.meta.env.VITE_API_URL_LOCAL;
+
+        // Stats
+        const statsRes = await fetch(`${urlBase}/users/stats`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const statsJson = await statsRes.json();
+        if (!statsRes.ok) throw new Error(statsJson.message || 'Failed to load stats');
+        const s = statsJson.data?.stats || {};
+        setStats([
+          { title: 'Questions Asked', value: String(s.questionsAsked ?? 0), icon: MessageCircle, color: 'text-primary' },
+          { title: 'Answers Provided', value: String(s.answersProvided ?? 0), icon: BookOpen, color: 'text-education' },
+          { title: 'Subscriptions', value: String(s.subscriptions ?? 0), icon: TrendingUp, color: 'text-success' },
+          { title: 'Payments', value: String(s.paymentsMade ?? 0), icon: Clock, color: 'text-secondary' },
+        ]);
+
+        // Recent questions as activity
+        const qRes = await fetch(`${urlBase}/users/questions`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const qJson = await qRes.json();
+        const questions = qJson.data?.questions || [];
+        const activity = questions.slice(0, 5).map((q: any) => ({
+          action: `Asked: ${q.title || q.subject || 'Question'}`,
+          time: new Date(q.createdAt).toLocaleString(),
+          status: q.status || 'Open'
+        }));
+        setRecentActivity(activity);
+
+        // Optional: subject progress placeholder until backend provides
+        setSubjects([]);
+      } catch (e: any) {
+        setError(e.message || 'Failed to load dashboard');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDashboard();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -90,13 +87,13 @@ const Dashboard = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">
-            Karibu Tena,{" "}
+            Welcome back,{" "}
             <span className="bg-gradient-kenya bg-clip-text text-transparent">
               {user?.firstName}!
             </span>
           </h1>
           <p className="text-muted-foreground">
-            Hii ni takwimu ya maendeleo yako ya kujifunza katika mfumo wa CBC.
+            Your learning snapshot across the CBC curriculum.
           </p>
         </div>
 
@@ -109,7 +106,7 @@ const Dashboard = () => {
                   <div>
                     <p className="text-sm text-muted-foreground mb-1">{stat.title}</p>
                     <h3 className="text-2xl font-bold">{stat.value}</h3>
-                    <p className="text-xs text-success">{stat.change}</p>
+                    {stat.change ? (<p className="text-xs text-success">{stat.change}</p>) : null}
                   </div>
                   <div className={`p-3 rounded-full ${stat.color} bg-opacity-20`}>
                     <stat.icon className={`w-5 h-5 ${stat.color}`} />
@@ -126,19 +123,23 @@ const Dashboard = () => {
           <div className="lg:col-span-2">
             <Tabs defaultValue="activity" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="activity">Shughuli Za Hivi Karibuni</TabsTrigger>
-                <TabsTrigger value="subjects">Masomo</TabsTrigger>
+                <TabsTrigger value="activity">Recent Activity</TabsTrigger>
+                <TabsTrigger value="subjects">Subjects</TabsTrigger>
               </TabsList>
               
               <TabsContent value="activity">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Shughuli Za Hivi Karibuni</CardTitle>
+                    <CardTitle>Recent Activity</CardTitle>
                     <CardDescription>
-                      Shughuli zako za hivi karibuni katika mfumo
+                      Your latest activity in the system
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
+                    {error && <div className="text-destructive mb-2">{error}</div>}
+                    {loading ? (
+                      <div>Loading...</div>
+                    ) : (
                     <div className="space-y-4">
                       {recentActivity.map((activity, index) => (
                         <div key={index} className="flex justify-between items-start">
@@ -147,17 +148,14 @@ const Dashboard = () => {
                             <p className="text-xs text-muted-foreground">{activity.time}</p>
                           </div>
                           <Badge 
-                            variant={activity.status === "Inaendelea" ? "secondary" : "default"}
-                            className={
-                              activity.status === "Imejibiwa" ? "bg-success" : 
-                              activity.status === "Imekamilika" ? "bg-primary" : ""
-                            }
+                            variant={activity.status?.toLowerCase() === "in_progress" ? "secondary" : "default"}
                           >
                             {activity.status}
                           </Badge>
                         </div>
                       ))}
                     </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -165,12 +163,15 @@ const Dashboard = () => {
               <TabsContent value="subjects">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Maendeleo ya Masomo</CardTitle>
+                    <CardTitle>Subject Progress</CardTitle>
                     <CardDescription>
-                      Wasifu wako wa masomo yote na maendeleo
+                      Your subjects overview and progress
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
+                    {subjects.length === 0 ? (
+                      <div className="text-sm text-muted-foreground">No subject progress yet.</div>
+                    ) : (
                     <div className="space-y-4">
                       {subjects.map((subject, index) => (
                         <div key={index}>
@@ -182,6 +183,7 @@ const Dashboard = () => {
                         </div>
                       ))}
                     </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -195,25 +197,25 @@ const Dashboard = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Award className="w-5 h-5" />
-                  Mafanikio
+                  Achievements
                 </CardTitle>
                 <CardDescription>
-                  Medali zako za mafanikio ya kujifunza
+                  Your learning achievements
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="bg-primary/20 rounded-lg p-4 text-center">
                     <Star className="w-8 h-8 mx-auto mb-2 text-primary" />
-                    <p className="text-xs">Mwanafunzi Bora</p>
+                    <p className="text-xs">Top Learner</p>
                   </div>
                   <div className="bg-secondary/20 rounded-lg p-4 text-center">
                     <Target className="w-8 h-8 mx-auto mb-2 text-secondary" />
-                    <p className="text-xs">Lengo Limetimia</p>
+                    <p className="text-xs">Goal Achieved</p>
                   </div>
                   <div className="bg-education/20 rounded-lg p-4 text-center">
                     <TrendingUp className="w-8 h-8 mx-auto mb-2 text-education" />
-                    <p className="text-xs">Mwerekano Mzuri</p>
+                    <p className="text-xs">Great Progress</p>
                   </div>
                 </div>
               </CardContent>
@@ -224,31 +226,31 @@ const Dashboard = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Calendar className="w-5 h-5" />
-                  Matukio Yajayo
+                  Upcoming Events
                 </CardTitle>
                 <CardDescription>
-                  Ratiba yako ya kujifunza ijayo
+                  Your upcoming learning schedule
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex gap-4">
                     <div className="bg-primary text-primary-foreground rounded-lg p-2 text-center min-w-[50px]">
-                      <p className="text-sm">Jum</p>
+                      <p className="text-sm">Fri</p>
                       <p className="font-bold">15</p>
                     </div>
                     <div>
-                      <p className="text-sm font-medium">Mitihani ya Hisabati</p>
+                      <p className="text-sm font-medium">Mathematics Exam</p>
                       <p className="text-xs text-muted-foreground">10:00 AM - 11:30 AM</p>
                     </div>
                   </div>
                   <div className="flex gap-4">
                     <div className="bg-secondary text-secondary-foreground rounded-lg p-2 text-center min-w-[50px]">
-                      <p className="text-sm">Jtn</p>
+                      <p className="text-sm">Sat</p>
                       <p className="font-bold">16</p>
                     </div>
                     <div>
-                      <p className="text-sm font-medium">Zoezi la Kiswahili</p>
+                      <p className="text-sm font-medium">Kiswahili Exercise</p>
                       <p className="text-xs text-muted-foreground">2:00 PM - 3:00 PM</p>
                     </div>
                   </div>

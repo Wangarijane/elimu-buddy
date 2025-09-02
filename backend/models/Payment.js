@@ -241,7 +241,6 @@ const paymentSchema = new mongoose.Schema({
 });
 
 // Indexes
-paymentSchema.index({ paymentId: 1 });
 paymentSchema.index({ payer: 1 });
 paymentSchema.index({ payee: 1 });
 paymentSchema.index({ status: 1 });

@@ -117,8 +117,6 @@ const subjectSchema = new mongoose.Schema({
 });
 
 // Indexes for better query performance
-subjectSchema.index({ name: 1 });
-subjectSchema.index({ code: 1 });
 subjectSchema.index({ category: 1 });
 subjectSchema.index({ level: 1 });
 subjectSchema.index({ grades: 1 });

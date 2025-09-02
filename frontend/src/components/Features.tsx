@@ -8,42 +8,42 @@ const Features = () => {
     {
       icon: Bot,
       title: "AI Study Buddy",
-      description: "Pata majibu ya haraka kutoka kwa AI yetu iliyoelezwa mfumo wa CBC. Uliza swali lolote, wakati wowote.",
+      description: "Get fast answers from our CBC-aware AI. Ask anything, anytime.",
       color: "text-primary",
       bgColor: "bg-primary/10"
     },
     {
       icon: Users,
-      title: "Wataalamu wa Binadamu",
-      description: "Unganishwa na walimu na wataalamu halisi wanaoweza kukusaidia na maswali magumu zaidi.",
+      title: "Human Experts",
+      description: "Connect with real teachers and experts for deeper guidance.",
       color: "text-secondary",
       bgColor: "bg-secondary/10"
     },
     {
       icon: Smartphone,
-      title: "Jifunze Popote",
-      description: "Jukwaa letu limeundwa kwa simu za mkononi ili uweze kujifunza popote ulipo.",
+      title: "Learn Anywhere",
+      description: "Mobile-first experience for learning wherever you are.",
       color: "text-education",
       bgColor: "bg-education/10"
     },
     {
       icon: Award,
-      title: "Mfumo wa CBC",
-      description: "Maudhui yote yameundwa kulingana na mfumo rasmi wa CBC wa Kenya kuanzia PP1 hadi Daraja la 12.",
+      title: "CBC Aligned",
+      description: "Content aligned to Kenya’s official CBC from PP1 to Grade 12.",
       color: "text-success",
       bgColor: "bg-success/10"
     },
     {
       icon: MessageSquare,
-      title: "Mazungumzo ya Lugha Mbili",
-      description: "Jifunze kwa Kiingereza au Kiswahili - chagua lugha unayotaka kutumia.",
+      title: "Bilingual Chat",
+      description: "Learn in English or Kiswahili – choose your language.",
       color: "text-primary",
       bgColor: "bg-primary/10"
     },
     {
       icon: TrendingUp,
-      title: "Ufuatiliaji wa Maendeleo",
-      description: "Fuata maendeleo yako na upate ripoti za kina kuhusu maeneo ya kuboresha.",
+      title: "Track Progress",
+      description: "Track your progress and get insights on what to improve.",
       color: "text-secondary",
       bgColor: "bg-secondary/10"
     }
@@ -54,13 +54,13 @@ const Features = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Kwa Nini Uchague{" "}
+            Why Choose {" "}
             <span className="bg-gradient-kenya bg-clip-text text-transparent">
               ElimuBuddy?
             </span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Tunachanganya teknolojia ya kisasa na ujuzi wa binadamu ili kukupa uzoefu bora wa kujifunza.
+            We blend modern AI with human expertise to deliver the best learning experience.
           </p>
         </div>
 
@@ -87,7 +87,7 @@ const Features = () => {
 
         <div className="text-center">
           <Button variant="kenya" size="lg" asChild>
-            <Link to="/signup">Anza Safari Yako ya Kujifunza</Link>
+            <Link to="/signup">Start Your Learning Journey</Link>
           </Button>
         </div>
       </div>

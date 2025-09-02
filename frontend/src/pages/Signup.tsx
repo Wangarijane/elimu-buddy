@@ -13,7 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [userType, setUserType] = useState("student"); // default to student for always-visible form
+  const [userType, setUserType] = useState("student");
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -31,26 +31,26 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const grades = [
-    "PP1 (Miaka 4)",
-    "PP2 (Miaka 5)",
-    "Daraja 1 (Miaka 6)",
-    "Daraja 2 (Miaka 7)",
-    "Daraja 3 (Miaka 8)",
-    "Daraja 4 (Miaka 9)",
-    "Daraja 5 (Miaka 10)",
-    "Daraja 6 (Miaka 11)",
-    "Daraja 7 (Miaka 12)",
-    "Daraja 8 (Miaka 13)",
-    "Daraja 9 (Miaka 14)",
-    "Daraja 10 (Miaka 15)",
-    "Daraja 11 (Miaka 16)",
-    "Daraja 12 (Miaka 17)",
+    "PP1 (Age 4)",
+    "PP2 (Age 5)",
+    "Grade 1 (Age 6)",
+    "Grade 2 (Age 7)",
+    "Grade 3 (Age 8)",
+    "Grade 4 (Age 9)",
+    "Grade 5 (Age 10)",
+    "Grade 6 (Age 11)",
+    "Grade 7 (Age 12)",
+    "Grade 8 (Age 13)",
+    "Grade 9 (Age 14)",
+    "Grade 10 (Age 15)",
+    "Grade 11 (Age 16)",
+    "Grade 12 (Age 17)",
   ];
 
   const userTypes = [
-    { id: "student", name: "Mwanafunzi", description: "Nataka kujifunza na kupata msaada wa masomo", icon: "👨‍🎓" },
-    { id: "parent", name: "Mzazi", description: "Nataka kusaidia mtoto wangu kujifunza", icon: "👩‍👧‍👦" },
-    { id: "expert", name: "Mtaalamu/Mwalimu", description: "Nataka kusaidia wanafunzi na kupata kipato", icon: "👩‍🏫" },
+    { id: "student", name: "Student", description: "I want to learn and get study help", icon: "👨‍🎓" },
+    { id: "parent", name: "Parent", description: "I want to support my child’s learning", icon: "👩‍👧‍👦" },
+    { id: "expert", name: "Expert/Teacher", description: "I want to help learners and earn", icon: "👩‍🏫" },
   ];
 
   const handleInputChange = (field: string, value: string | boolean) => {
@@ -65,17 +65,17 @@ const Signup = () => {
     // Validate Kenyan phone number format
     const kenyanPhoneRegex = /^\+254[17]\d{8}$/;
     if (!kenyanPhoneRegex.test(formData.phone)) {
-      setError("Tafadhali weka namba ya simu ya Kenya iliyo sahihi (uanzie na +254 kisha tarakimu 7 au 1, kwa ujumla tarakimu 13)");
+      setError("Please enter a valid Kenyan phone number (start with +254 followed by 7/1 and 8 digits)");
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Nenosiri haifanani!");
+      setError("Passwords do not match!");
       return;
     }
 
     if (!formData.agreeToTerms) {
-      setError("Tafadhali kubali masharti ya matumizi!");
+      setError("Please accept the terms of use!");
       return;
     }
 
@@ -106,13 +106,13 @@ const Signup = () => {
         if (errorObj && typeof errorObj === 'object') {
           // Format object errors into a readable string
           const errorMessages = Object.values(errorObj).flat().join(', ');
-          setError(errorMessages || "Hitilafu katika usajili. Tafadhali jaribu tena.");
+          setError(errorMessages || "Registration error. Please try again.");
         } else {
-          setError(error.message || "Hitilafu katika usajili. Tafadhali jaribu tena.");
+          setError(error.message || "Registration error. Please try again.");
         }
       } catch (parseError) {
         // If it's not JSON, use the message as is
-        setError(error.message || "Hitilafu katika usajili. Tafadhali jaribu tena.");
+        setError(error.message || "Registration error. Please try again.");
       }
     }
   };
@@ -122,7 +122,7 @@ const Signup = () => {
       <div className="w-full max-w-2xl">
         <div className="mb-6">
           <Link to="/" className="inline-flex items-center text-white hover:text-white/80 transition-colors">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Rudi Nyumbani
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back Home
           </Link>
         </div>
 
@@ -131,20 +131,20 @@ const Signup = () => {
             <div className="flex justify-center mb-4">
               <img src={elimubuddyLogo} alt="ElimuBuddy Logo" className="h-12 w-12 rounded-lg" />
             </div>
-            <CardTitle className="text-2xl font-bold">Jiunge na ElimuBuddy</CardTitle>
-            <CardDescription>Anza safari yako ya kujifunza na teknolojia ya kisasa</CardDescription>
+            <CardTitle className="text-2xl font-bold">Join ElimuBuddy</CardTitle>
+            <CardDescription>Start your learning journey with modern technology</CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-6">
             {error && (
               <div className="bg-destructive/15 text-destructive p-3 rounded-md text-sm">
-                {error.includes('{') ? 'Tatizo la usajili. Tafadhali angalia maelezo yaliyowekwa.' : error}
+                {error.includes('{') ? 'Registration issue. Please check the provided details.' : error}
               </div>
             )}
 
             {isSuccess && (
               <div className="bg-success/15 text-success p-3 rounded-md text-sm">
-                Usajili umekamilika! Tafadhali ingia kwenye akaunti yako.
+                Registration complete! Please log in to your account.
               </div>
             )}
 
@@ -171,7 +171,7 @@ const Signup = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">Jina la Kwanza</Label>
+                  <Label htmlFor="firstName">First Name</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -186,7 +186,7 @@ const Signup = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Jina la Ukoo</Label>
+                  <Label htmlFor="lastName">Last Name</Label>
                   <Input
                     id="lastName"
                     placeholder="Mwangi"
@@ -200,7 +200,7 @@ const Signup = () => {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Barua Pepe</Label>
+                  <Label htmlFor="email">Email</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -217,7 +217,7 @@ const Signup = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Namba ya Simu</Label>
+                  <Label htmlFor="phone">Phone Number</Label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -237,14 +237,14 @@ const Signup = () => {
               {(userType === "student" || userType === "parent") && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="grade">{userType === "student" ? "Daraja/Kiwango" : "Daraja la Mtoto"}</Label>
+                    <Label htmlFor="grade">{userType === "student" ? "Grade/Level" : "Child’s Grade"}</Label>
                     <Select 
                       onValueChange={(value) => handleInputChange("grade", value)} 
                       value={formData.grade}
                       disabled={isLoading}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Chagua daraja" />
+                        <SelectValue placeholder="Select grade" />
                       </SelectTrigger>
                       <SelectContent>
                         {grades.map((g) => (
@@ -256,10 +256,10 @@ const Signup = () => {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="school">{userType === "student" ? "Shule" : "Shule ya Mtoto"}</Label>
+                    <Label htmlFor="school">{userType === "student" ? "School" : "Child’s School"}</Label>
                     <Input
                       id="school"
-                      placeholder="Jina la shule"
+                      placeholder="School name"
                       value={formData.school}
                       onChange={(e) => handleInputChange("school", e.target.value)}
                       disabled={isLoading}
@@ -270,13 +270,13 @@ const Signup = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="password">Nenosiri</Label>
+                  <Label htmlFor="password">Password</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
-                      placeholder="Nenosiri"
+                      placeholder="Password"
                       value={formData.password}
                       onChange={(e) => handleInputChange("password", e.target.value)}
                       className="pl-10 pr-10"
@@ -300,11 +300,11 @@ const Signup = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Thibitisha Nenosiri</Label>
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
                   <Input
                     id="confirmPassword"
                     type="password"
-                    placeholder="Rudia nenosiri"
+                    placeholder="Repeat password"
                     value={formData.confirmPassword}
                     onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
                     required
@@ -322,21 +322,21 @@ const Signup = () => {
                 />
                 <div className="text-sm leading-relaxed">
                   <Label htmlFor="terms" className="cursor-pointer">
-                    Nakubali{" "}
+                    I agree to the{" "}
                     <Link to="/terms" className="text-primary hover:underline">
-                      Masharti ya Matumizi
+                      Terms of Use
                     </Link>{" "}
-                    na{" "}
+                    and{" "}
                     <Link to="/privacy" className="text-primary hover:underline">
-                      Sera ya Faragha
+                      Privacy Policy
                     </Link>{" "}
-                    ya ElimuBuddy.
+                    of ElimuBuddy.
                   </Label>
                 </div>
               </div>
 
               <Button type="submit" variant="kenya" className="w-full" disabled={isLoading || !formData.agreeToTerms}>
-                {isLoading ? "Inasajili..." : "Jisajili Sasa"}
+                {isLoading ? "Registering..." : "Sign Up Now"}
               </Button>
             </form>
           </CardContent>

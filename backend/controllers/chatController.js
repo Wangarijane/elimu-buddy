@@ -227,7 +227,7 @@ export const sendMessage = async (req, res, next) => {
         
         // Extract the answer from the AI response
         const aiAnswer = aiResult.answer || aiResult.response || 
-                         "Samahani, sijapata jibu la kukidhi swali lako.";
+                         "Sorry, I couldn't find an answer that matches your question.";
         
         const aiMessage = new Message({
           chat: chatId,
@@ -354,7 +354,7 @@ export const getAIResponse = async (req, res, next) => {
     // Generate AI response
     const aiResult = await generateAIResponse(message, chat.subject, chat.grade);
     const aiResponse = aiResult.answer || aiResult.response || 
-                      "Samahani, sijapata jibu la kukidhi swali lako.";
+                      "Sorry, I couldn't find an answer that matches your question.";
 
     // Create AI message
     const aiMessage = new Message({
@@ -446,7 +446,7 @@ export const getDirectAIResponse = async (req, res, next) => {
     // Generate AI response
     const aiResult = await generateAIResponse(message, 'General', 'General');
     const aiResponse = aiResult.answer || aiResult.response || 
-                      "Samahani, sijapata jibu la kukidhi swali lako.";
+                      "Sorry, I couldn't find an answer that matches your question.";
 
     res.json({
       success: true,

@@ -25,7 +25,7 @@ const createTransporter = () => {
 // Email templates
 const emailTemplates = {
   welcome: {
-    subject: 'Karibu ElimuBuddy Kenya! 🎓',
+    subject: 'Welcome to ElimuBuddy Kenya! 🎓',
     template: 'welcome.html'
   },
   emailVerification: {
@@ -100,52 +100,52 @@ const getDefaultTemplate = (templateName, data) => {
     case 'welcome.html':
       return `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #1f2937;">Karibu ElimuBuddy Kenya! 🎓</h2>
-          <p>Habari ${fullName},</p>
-          <p>Karibu kwenye ElimuBuddy Kenya! Tunafurahi kukuwa nawe kwenye safari yako ya kujifunza.</p>
-          <p>ElimuBuddy ni msaada wa AI + binadamu ambao unakusaidia kujifunza mtaala wa CBC wa Kenya.</p>
-          <p>Unaweza:</p>
+          <h2 style="color: #1f2937;">Welcome to ElimuBuddy Kenya! 🎓</h2>
+          <p>Hello ${fullName},</p>
+          <p>Welcome to ElimuBuddy Kenya! We're excited to join you on your learning journey.</p>
+          <p>ElimuBuddy is an AI + human support platform that helps you learn Kenya's CBC curriculum.</p>
+          <p>You can:</p>
           <ul>
-            <li>Kuuliza maswali kwa AI</li>
-            <li>Kupata msaada kutoka kwa walimu waliohitimu</li>
-            <li>Kufuatilia maendeleo yako</li>
-            <li>Kushiriki katika vyumba vya kujifunza</li>
+            <li>Ask questions to AI</li>
+            <li>Get help from qualified teachers</li>
+            <li>Track your progress</li>
+            <li>Participate in study rooms</li>
           </ul>
-          <p>Tunaanza safari yako ya kujifunza!</p>
-          <p>Kwa heshima,<br>Timu ya ElimuBuddy Kenya</p>
+          <p>Let's begin your learning journey!</p>
+          <p>Kind regards,<br>The ElimuBuddy Kenya Team</p>
         </div>
       `;
       
     case 'email-verification.html':
       return `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #1f2937;">Thibitisha Barua Pepe Yako</h2>
-          <p>Habari ${fullName},</p>
-          <p>Tafadhali thibitisha barua pepe yako kwa kubofya kiungo hapa chini:</p>
+          <h2 style="color: #1f2937;">Verify Your Email</h2>
+          <p>Hello ${fullName},</p>
+          <p>Please verify your email by clicking the link below:</p>
           <p style="text-align: center;">
             <a href="{{verificationUrl}}" style="background-color: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-              Thibitisha Barua Pepe
+              Verify Email
             </a>
           </p>
-          <p>Kiungo hiki kitakoma baada ya saa 24.</p>
-          <p>Kwa heshima,<br>Timu ya ElimuBuddy Kenya</p>
+          <p>This link will expire after 24 hours.</p>
+          <p>Kind regards,<br>The ElimuBuddy Kenya Team</p>
         </div>
       `;
       
     case 'password-reset.html':
       return `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #1f2937;">Badilisha Neno la Siri</h2>
-          <p>Habari ${fullName},</p>
-          <p>Umeomba kubadilisha neno la siri lako. Bofya kiungo hapa chini kuweka neno la siri jipya:</p>
+          <h2 style="color: #1f2937;">Reset Password</h2>
+          <p>Hello ${fullName},</p>
+          <p>You requested to change your password. Click the link below to set a new password:</p>
           <p style="text-align: center;">
             <a href="{{resetUrl}}" style="background-color: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-              Badilisha Neno la Siri
+              Reset Password
             </a>
           </p>
-          <p>Kiungo hiki kitakoma baada ya saa 1.</p>
-          <p>Ikiwa hukuomba kubadilisha neno la siri, tafadhali usiende kiungo hiki.</p>
-          <p>Kwa heshima,<br>Timu ya ElimuBuddy Kenya</p>
+          <p>This link will expire after 1 hour.</p>
+          <p>If you did not request a password change, please ignore this link.</p>
+          <p>Kind regards,<br>The ElimuBuddy Kenya Team</p>
         </div>
       `;
       
@@ -153,9 +153,9 @@ const getDefaultTemplate = (templateName, data) => {
       return `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #1f2937;">ElimuBuddy Kenya</h2>
-          <p>Habari ${fullName},</p>
+          <p>Hello ${fullName},</p>
           <p>{{message}}</p>
-          <p>Kwa heshima,<br>Timu ya ElimuBuddy Kenya</p>
+          <p>Kind regards,<br>The ElimuBuddy Kenya Team</p>
         </div>
       `;
   }

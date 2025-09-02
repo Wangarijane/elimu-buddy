@@ -16,14 +16,12 @@ interface Message {
 }
 
 const Chat = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: 'Habari! Mimi ni ElimuBuddy, msaidizi wako wa kujifunza CBC. Niulize swali lolote kuhusu masomo yako!',
-      sender: 'ai',
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([{
+    id: '1',
+    text: 'Hello! I am ElimuBuddy, your CBC learning assistant. Ask me anything about your studies!',
+    sender: 'ai',
+    timestamp: new Date()
+  }]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [authError, setAuthError] = useState(false);
@@ -31,11 +29,11 @@ const Chat = () => {
   const navigate = useNavigate();
 
   const quickQuestions = [
-    "Nini ni mfumo wa CBC?",
-    "Nisaidie na Hisabati ya Daraja la 4",
-    "Masomo ya Sayansi ya Daraja la 7",
-    "Jinsi ya kuandika insha nzuri",
-    "História ya Kenya kwa ufupi"
+    "What is the CBC system?",
+    "Help with Grade 4 Mathematics",
+    "Grade 7 Science topics",
+    "How to write a good essay",
+    "Brief history of Kenya"
   ];
 
   const scrollToBottom = () => {
@@ -48,7 +46,7 @@ const Chat = () => {
 
   // Check if user is authenticated
   const isAuthenticated = () => {
-    const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_KEY);
+    const token = localStorage.getItem('token');
     return !!token;
   };
 
@@ -58,7 +56,7 @@ const Chat = () => {
       setAuthError(true);
       const authErrorMessage: Message = {
         id: Date.now().toString(),
-        text: "Tafadhali ingia kwenye akaunti yako ili kuweza kuuliza maswali.",
+        text: "Please log in to your account to ask questions.",
         sender: 'ai',
         timestamp: new Date()
       };
@@ -75,7 +73,7 @@ const Chat = () => {
       // Create a chat session first if it doesn't exist
       let chatId = localStorage.getItem('current_chat_id');
       if (!chatId) {
-        const chatResponse = await fetch(`${import.meta.env.VITE_API_URL}/chat`, {
+        const chatResponse = await fetch(`${import.meta.env.VITE_API_URL_PROD || import.meta.env.VITE_API_URL_LOCAL}/chat`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -99,7 +97,7 @@ const Chat = () => {
       }
 
       // Send message to the chat
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/chat/${chatId}/message`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL_PROD || import.meta.env.VITE_API_URL_LOCAL}/chat/${chatId}/message`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -114,13 +112,14 @@ const Chat = () => {
       if (response.status === 401) {
         // Token is invalid or expired
         setAuthError(true);
-        localStorage.removeItem(import.meta.env.VITE_AUTH_TOKEN_KEY);
-        localStorage.removeItem(import.meta.env.VITE_AUTH_USER_KEY);
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
         localStorage.removeItem('current_chat_id');
         
         const authErrorMessage: Message = {
           id: Date.now().toString(),
-          text: "Imelipita muda wa kutumia akaunti yako. Tafadhali ingia tena.",
+          text: "Your session has expired. Please log in again.",
           sender: 'ai',
           timestamp: new Date()
         };
@@ -135,7 +134,7 @@ const Chat = () => {
       const data = await response.json();
       
       // Extract AI response from the response
-      const aiResponse = data.data.aiResponse?.content || "Samahani, sijapata jibu la kukidhi swali lako.";
+      const aiResponse = data.data.aiResponse?.content || "Sorry, I couldn't find a suitable answer to your question.";
       
       const aiMessage: Message = {
         id: Date.now().toString(),
@@ -149,12 +148,12 @@ const Chat = () => {
       console.error('Error calling AI API:', error);
       
       // More specific error message
-      let errorText = "Samahani, kuna hitilafu ya kiufundi. Tafadhali jaribu tena baadaye.";
+      let errorText = "Sorry, there was a technical error. Please try again later.";
       
       if (error instanceof Error) {
-        errorText = `Samahani, kuna hitilafu: ${error.message}`;
+        errorText = `Sorry, there was an error: ${error.message}`;
       } else if (typeof error === 'string') {
-        errorText = `Samahani, kuna hitilafu: ${error}`;
+        errorText = `Sorry, there was an error: ${error}`;
       }
       
       const errorMessage: Message = {
@@ -190,7 +189,7 @@ const Chat = () => {
       setAuthError(true);
       const authErrorMessage: Message = {
         id: Date.now().toString(),
-        text: "Tafadhali ingia kwenye akaunti yako ili kuweza kuuliza maswali.",
+        text: "Please log in to your account to ask questions.",
         sender: 'ai',
         timestamp: new Date()
       };
@@ -219,13 +218,13 @@ const Chat = () => {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold mb-4">
-            Mazungumzo na{" "}
+            Chat with {" "}
             <span className="bg-gradient-kenya bg-clip-text text-transparent">
               AI Study Buddy
             </span>
           </h1>
           <p className="text-muted-foreground">
-            Uliza swali lolote kuhusu mfumo wa CBC - Nitakusaidia kwa Kiswahili au Kiingereza!
+            Ask anything about the CBC curriculum – I can help in English or Kiswahili!
           </p>
         </div>
 
@@ -233,9 +232,9 @@ const Chat = () => {
           <Alert variant="destructive" className="mb-6">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription className="flex justify-between items-center">
-              <span>Unahitaji kuingia kwenye akaunti yako ili kuweza kuuliza maswali.</span>
+              <span>You need to log in to ask questions.</span>
               <Button variant="outline" size="sm" onClick={handleLoginRedirect}>
-                Ingia Sasa
+                Login Now
               </Button>
             </AlertDescription>
           </Alert>
@@ -248,7 +247,7 @@ const Chat = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Lightbulb className="h-5 w-5 text-education" />
-                  Maswali ya Haraka
+                  Quick Questions
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
@@ -270,23 +269,23 @@ const Chat = () => {
               <CardHeader>
                 <CardTitle className="text-lg">
                   <MessageSquare className="h-5 w-5 text-primary inline mr-2" />
-                  Takwimu
+                  Stats
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Maswali ya Leo</span>
+                    <span className="text-sm text-muted-foreground">Questions Today</span>
                     <Badge variant="secondary">3/5</Badge>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Mpango</span>
-                    <Badge variant="outline">Bure</Badge>
+                    <span className="text-sm text-muted-foreground">Plan</span>
+                    <Badge variant="outline">Free</Badge>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Hali ya Mtumiaji</span>
+                    <span className="text-sm text-muted-foreground">User Status</span>
                     <Badge variant={isAuthenticated() ? "success" : "destructive"}>
-                      {isAuthenticated() ? "Imesajiliwa" : "Haijasajiliwa"}
+                      {isAuthenticated() ? "Registered" : "Not Registered"}
                     </Badge>
                   </div>
                 </div>
@@ -363,7 +362,7 @@ const Chat = () => {
                 {!isAuthenticated() ? (
                   <div className="text-center py-4">
                     <Button onClick={handleLoginRedirect} variant="kenya">
-                      Ingia kwenye Akaunti Yako kuuliza Maswali
+                      Log in to your account to ask questions
                     </Button>
                   </div>
                 ) : (
@@ -371,7 +370,7 @@ const Chat = () => {
                     <Input
                       value={inputMessage}
                       onChange={(e) => setInputMessage(e.target.value)}
-                      placeholder="Andika swali lako hapa..."
+                      placeholder="Type your question here..."
                       onKeyPress={handleKeyPress}
                       className="flex-1"
                     />

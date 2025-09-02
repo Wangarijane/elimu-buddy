@@ -57,9 +57,8 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
-    // Get language from localStorage or default to 'sw'
     const savedLang = localStorage.getItem('elimubuddy-language') as Language;
-    return savedLang && (savedLang === 'en' || savedLang === 'sw') ? savedLang : 'sw';
+    return savedLang && (savedLang === 'en' || savedLang === 'sw') ? savedLang : 'en';
   });
 
   const setLanguage = (lang: Language) => {
