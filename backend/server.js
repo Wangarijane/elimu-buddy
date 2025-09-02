@@ -65,11 +65,18 @@ const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173,https:
   .split(',')
   .map((o) => o.trim());
 
+// Log allowed origins for debugging
+console.log('🌐 Allowed CORS origins:', allowedOrigins);
+
 app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true); // allow non-browser or same-origin
-      if (allowedOrigins.includes(origin)) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        console.log(`✅ CORS allowed for origin: ${origin}`);
+        return callback(null, true);
+      }
+      console.log(`❌ CORS blocked for origin: ${origin}. Allowed origins:`, allowedOrigins);
       return callback(new Error(`Not allowed by CORS: ${origin}`));
     },
     credentials: true,
@@ -100,6 +107,30 @@ app.get('/health', (req, res) => {
 
 app.get('/', (req, res) => {
   res.send('🚀 ElimuBuddy Kenya Backend is live!');
+});
+
+// ===== API INFO ROUTE =====
+app.get('/api', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'ElimuBuddy Kenya API is running',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    endpoints: {
+      auth: '/api/auth',
+      users: '/api/users',
+      questions: '/api/questions',
+      answers: '/api/answers',
+      payments: '/api/payments',
+      subscriptions: '/api/subscriptions',
+      experts: '/api/experts',
+      chat: '/api/chat',
+      admin: '/api/admin',
+      curriculum: '/api/curriculum'
+    },
+    documentation: 'https://github.com/your-repo/elimubuddy-kenya-learn'
+  });
 });
 
 // ===== API ROUTES =====
