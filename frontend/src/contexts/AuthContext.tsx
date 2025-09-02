@@ -51,7 +51,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Check for existing auth on app load
+  // Determine API URL based on environment
+  const API_URL = import.meta.env.MODE === 'production'
+    ? import.meta.env.VITE_API_URL_PROD
+    : import.meta.env.VITE_API_URL_LOCAL;
+
   useEffect(() => {
     const initializeAuth = async () => {
       const storedUser = localStorage.getItem('user');
@@ -75,33 +79,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Login failed');
-      }
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
       const data = await response.json();
-      
-      // Store tokens and user data
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
+      }
+
       setToken(data.data.tokens.accessToken);
       setRefreshToken(data.data.tokens.refreshToken);
       setUser(data.data.user);
-      
+
       localStorage.setItem('token', data.data.tokens.accessToken);
       localStorage.setItem('refreshToken', data.data.tokens.refreshToken);
       localStorage.setItem('user', JSON.stringify(data.data.user));
 
       navigate('/dashboard');
-      
     } catch (error: any) {
       console.error('Login error:', error);
       throw error;
@@ -113,7 +111,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (userData: any) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
@@ -122,15 +120,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        // More detailed error message
         const errorMessage = data.message || 
-                            (data.errors ? JSON.stringify(data.errors) : 'Registration failed');
+                             (data.errors ? JSON.stringify(data.errors) : 'Registration failed');
         throw new Error(errorMessage);
       }
 
-      // Don't auto-login, redirect to login page instead
       navigate('/login');
-      
     } catch (error: any) {
       console.error('Registration error:', error);
       throw error;
