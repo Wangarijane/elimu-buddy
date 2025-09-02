@@ -215,7 +215,8 @@ The following prompt was generated in ChatGPT and then fed into **Lovable** for 
 
 ## 🔗 Demo / Deployment
 
-> *(Insert Vercel/Render links or demo video here)*
+- **Frontend (Vercel):** [https://elimu-buddy.vercel.app/](https://elimu-buddy.vercel.app/)
+- **Backend API (Render):** [https://elimu-buddy.onrender.com/api](https://elimu-buddy.onrender.com/api)
 
 ---
 
