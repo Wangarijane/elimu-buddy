@@ -108,6 +108,26 @@ backend/
 
 ---
 
+## 🛠 Platform Features
+
+- Student Dashboard  
+- Parent Dashboard  
+- Expert Dashboard  
+- Admin Dashboard  
+- AI Chat Interface  
+- Expert Marketplace  
+
+---
+
+## 📈 Areas for Improvement / Next Steps
+
+- **Authentication:** Expand secure login and role-based dashboards  
+- **M-Pesa Integration:** Fully implement subscription and payouts  
+- **Twilio Integration:** SMS alerts and notifications  
+- **UI/UX Enhancements:** More polished, responsive, and inclusive design  
+- **Other APIs:** Explore additional integrations for personalization and analytics  
+- **Adaptive learning:** Tailored study support based on student performance
+
 ## 🤖 AI & Prompt Engineering
 
 The project leveraged **prompt engineering** in two stages:
