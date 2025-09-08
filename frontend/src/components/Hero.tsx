@@ -35,7 +35,7 @@ const Hero = () => {
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Link>
             </Button>
-            <Button variant="outline" size="lg" className="border-white/30 text-white hover:bg-white hover:text-accent" asChild>
+            <Button variant="outline" size="lg" className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white" asChild>
               <Link to="/subjects">Browse Subjects</Link>
             </Button>
           </div>
