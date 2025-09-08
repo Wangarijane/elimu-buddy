@@ -31,8 +31,11 @@ ElimuBuddy is a **Kenyan AI + Human hybrid study platform** that helps learners,
 
 **Dev & Debug Tools:**
 
-* **Cursor AI** → Backend generation
-* **DeepSeek & ChatGPT** → Debugging and code optimization
+* **ChatGPT** → Prompt engineering & initial project planning  
+* **Lovable AI** → Project bootstrapping / starter code generation  
+* **Cursor AI** → Backend scaffolding & generation  
+* **DeepSeek & ChatGPT** → Debugging, refinement, and code optimization  
+
 
 ---
 
