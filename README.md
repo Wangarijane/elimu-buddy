@@ -1,7 +1,9 @@
-# ElimuBuddy – AI + Human Hybrid Study Companion
+# 🚀 ElimuBuddy – AI + Human Hybrid Study Companion  
 
-[![Project Status](https://img.shields.io/badge/status-active-success)](https://github.com/Wangarijane/elimu-buddy)
-**Hackathon:** Vibe Coding 2025 | **SDG Goal:** 4 – Quality Education
+[![Live Demo – Vercel](https://img.shields.io/badge/Demo-Live-green?style=for-the-badge&logo=vercel)](https://elimu-buddy.vercel.app/)  
+[![Backend API – Render](https://img.shields.io/badge/API-Docs-blue?style=for-the-badge&logo=render)](https://elimu-buddy.onrender.com/api)  
+
+**Hackathon:** Vibe Coding 2025 | **SDG Goal:** 4 – Quality Education  
 
 ElimuBuddy is a **Kenyan AI + Human hybrid study platform** that helps learners, parents, and educators navigate the CBC curriculum. The platform integrates AI-powered learning, expert guidance, and tiered monetization to provide accessible, real-world educational support.
 
