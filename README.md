@@ -24,7 +24,7 @@ ElimuBuddy is a **Kenyan AI + Human hybrid study platform** that helps learners,
 
 **APIs & Integrations:**
 
-* **Hugging Face AI** → AI question answering & study guidance
+* **Google Gemini AI (Generative AI API)** → AI-powered question answering & study guidance
 * **M-Pesa API & Instasend** → Payment collection & expert payouts
 * **Twilio & SMS/Push notifications** → Real-time alerts
 * **Email notifications** → Updates for payments and progress
