@@ -8,19 +8,83 @@ import Subscription from '../models/Subscription.js';
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 /**
+ * Safely extract text from Gemini result (with debugging)
+ */
+const safeExtractText = (result) => {
+  try {
+    console.log("🔍 Gemini raw result:", JSON.stringify(result, null, 2));
+
+    // Case 1: Direct response text access
+    if (result?.response?.text) {
+      return result.response.text();
+    }
+
+    // Case 2: Candidates structure (common in newer Gemini versions)
+    if (result?.response?.candidates?.[0]?.content?.parts?.[0]?.text) {
+      return result.response.candidates[0].content.parts[0].text;
+    }
+
+    // Case 3: Direct text access
+    if (typeof result?.text === "function") {
+      return result.text();
+    }
+    if (typeof result?.text === "string") {
+      return result.text;
+    }
+
+    // Case 4: Fallback to any text found in the response
+    const textResponse = result?.response?.text?.() ||
+                         result?.text?.() ||
+                         JSON.stringify(result).match(/"text":\s*"([^"]*)"/)?.[1];
+  
+    if (textResponse) return textResponse;
+
+    console.error("❌ No text found in Gemini response:", JSON.stringify(result, null, 2));
+    return "I apologize, but I couldn't process that request properly. Please try again.";
+  } catch (error) {
+    console.error("❌ Error extracting Gemini text:", e, JSON.stringify(result, null, 2));
+    return "I encountered an error while processing your request. Please try again."; 
+  }
+};
+
+/**
  * Generate AI response to student questions
  */
 export const generateAIResponse = async (question, subject, grade, language = 'en', user = null) => {
   try {
+    console.log("✅ GEMINI API key loaded:", !!process.env.GEMINI_API_KEY);
+
+    // Check if API key is available
+    if (!process.env.GEMINI_API_KEY) {
+      console.error("❌ GEMINI_API_KEY is not set in environment variables");
+      return {
+        success: false,
+        error: 'API key not configured',
+        fallback: generateFallbackResponse(question, subject, grade, language)
+      };
+    }
+
     const curriculumData = await getCurriculumContext(subject, grade);
     const prompt = buildGeminiPrompt(question, curriculumData, language);
-    
+
+    console.log("📩 Sending prompt to Gemini:", prompt.slice(0, 200), "...");
+
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
     const result = await model.generateContent(prompt);
+
+    // Get the response text directly from the result
     const response = await result.response;
     const text = response.text();
+    
+    console.log("📝 Gemini response text:", text);
 
-    const structuredResponse = parseAIResponse(text, language);
+    let structuredResponse = parseAIResponse(text, language);
+
+    // ✅ Fallback
+    if ((!structuredResponse.answer || structuredResponse.answer.trim() === "") && text) {
+      structuredResponse.answer = text;
+    }
+
     const enhancedResponse = await enhanceWithCurriculumData(
       structuredResponse, subject, grade, language
     );
@@ -40,7 +104,7 @@ export const generateAIResponse = async (question, subject, grade, language = 'e
     };
 
   } catch (error) {
-    console.error('Error generating AI response:', error);
+    console.error('❌ Error generating AI response:', error);
     return {
       success: false,
       error: 'Unable to generate AI response at this time',

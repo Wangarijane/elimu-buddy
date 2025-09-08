@@ -6,6 +6,10 @@ import mongoose from 'mongoose';
 export const protect = async (req, res, next) => {
   let token;
 
+  // Debug: log headers and secret status
+  console.log('Authorization header:', req.headers.authorization);
+  console.log('JWT_SECRET:', process.env.JWT_SECRET ? 'Set' : 'Not set');
+
   // Check for token in headers
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
@@ -21,9 +25,7 @@ export const protect = async (req, res, next) => {
       if (!req.user) {
         return res.status(401).json({
           success: false,
-          error: {
-            message: 'User not found'
-          }
+          error: { message: 'User not found' }
         });
       }
 
@@ -31,30 +33,28 @@ export const protect = async (req, res, next) => {
       if (!req.user.isActive) {
         return res.status(401).json({
           success: false,
-          error: {
-            message: 'Account is deactivated'
-          }
+          error: { message: 'Account is deactivated' }
         });
       }
 
       next();
     } catch (error) {
       console.error('Token verification error:', error);
-      
+      console.error('Token that failed:', token);
+
       if (error.name === 'TokenExpiredError') {
         return res.status(401).json({
           success: false,
           error: {
-            message: 'Token expired, please login again'
+            message: 'Token expired, please login again',
+            code: 'TOKEN_EXPIRED'
           }
         });
       }
 
       return res.status(401).json({
         success: false,
-        error: {
-          message: 'Not authorized, invalid token'
-        }
+        error: { message: 'Not authorized, invalid token' }
       });
     }
   }
@@ -62,9 +62,7 @@ export const protect = async (req, res, next) => {
   if (!token) {
     return res.status(401).json({
       success: false,
-      error: {
-        message: 'Not authorized, no token provided'
-      }
+      error: { message: 'Not authorized, no token provided' }
     });
   }
 };
@@ -97,18 +95,14 @@ export const authorize = (...roles) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        error: {
-          message: 'Authentication required'
-        }
+        error: { message: 'Authentication required' }
       });
     }
 
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
-        error: {
-          message: `Role '${req.user.role}' is not authorized to access this resource`
-        }
+        error: { message: `Role '${req.user.role}' is not authorized to access this resource` }
       });
     }
 
@@ -121,9 +115,7 @@ export const requireParent = (req, res, next) => {
   if (!req.user || req.user.role !== 'parent') {
     return res.status(403).json({
       success: false,
-      error: {
-        message: 'Parent access required'
-      }
+      error: { message: 'Parent access required' }
     });
   }
   next();
@@ -133,9 +125,7 @@ export const requireStudent = (req, res, next) => {
   if (!req.user || req.user.role !== 'student') {
     return res.status(403).json({
       success: false,
-      error: {
-        message: 'Student access required'
-      }
+      error: { message: 'Student access required' }
     });
   }
   next();
@@ -145,9 +135,7 @@ export const requireExpert = (req, res, next) => {
   if (!req.user || req.user.role !== 'expert') {
     return res.status(403).json({
       success: false,
-      error: {
-        message: 'Expert access required'
-      }
+      error: { message: 'Expert access required' }
     });
   }
 
@@ -155,9 +143,7 @@ export const requireExpert = (req, res, next) => {
   if (!req.user.expertInfo?.isVerified) {
     return res.status(403).json({
       success: false,
-      error: {
-        message: 'Expert account must be verified to access this resource'
-      }
+      error: { message: 'Expert account must be verified to access this resource' }
     });
   }
 
@@ -168,9 +154,7 @@ export const requireAdmin = (req, res, next) => {
   if (!req.user || req.user.role !== 'admin') {
     return res.status(403).json({
       success: false,
-      error: {
-        message: 'Admin access required'
-      }
+      error: { message: 'Admin access required' }
     });
   }
   next();
@@ -186,9 +170,7 @@ export const checkOwnership = (modelName) => {
       if (!resource) {
         return res.status(404).json({
           success: false,
-          error: {
-            message: 'Resource not found'
-          }
+          error: { message: 'Resource not found' }
         });
       }
 
@@ -200,25 +182,24 @@ export const checkOwnership = (modelName) => {
 
       // Check ownership based on model
       let isOwner = false;
-      
       switch (modelName) {
         case 'User':
           isOwner = resource._id.toString() === req.user._id.toString();
           break;
         case 'Question':
           isOwner = resource.askedBy.toString() === req.user._id.toString() ||
-                   resource.parent?.toString() === req.user._id.toString();
+                    resource.parent?.toString() === req.user._id.toString();
           break;
         case 'Answer':
           isOwner = resource.expert.toString() === req.user._id.toString() ||
-                   resource.student.toString() === req.user._id.toString();
+                    resource.student.toString() === req.user._id.toString();
           break;
         case 'Subscription':
           isOwner = resource.user.toString() === req.user._id.toString();
           break;
         case 'Payment':
           isOwner = resource.payer.toString() === req.user._id.toString() ||
-                   resource.payee?.toString() === req.user._id.toString();
+                    resource.payee?.toString() === req.user._id.toString();
           break;
         default:
           isOwner = false;
@@ -227,9 +208,7 @@ export const checkOwnership = (modelName) => {
       if (!isOwner) {
         return res.status(403).json({
           success: false,
-          error: {
-            message: 'Access denied: you do not own this resource'
-          }
+          error: { message: 'Access denied: you do not own this resource' }
         });
       }
 
@@ -250,9 +229,8 @@ export const rateLimitAction = (action, maxAttempts, windowMs) => {
     const now = Date.now();
     const windowStart = now - windowMs;
 
-    // Clean old attempts
     if (attempts.has(key)) {
-      attempts.set(key, attempts.get(key).filter(timestamp => timestamp > windowStart));
+      attempts.set(key, attempts.get(key).filter(ts => ts > windowStart));
     } else {
       attempts.set(key, []);
     }
@@ -262,9 +240,7 @@ export const rateLimitAction = (action, maxAttempts, windowMs) => {
     if (currentAttempts.length >= maxAttempts) {
       return res.status(429).json({
         success: false,
-        error: {
-          message: `Too many ${action} attempts, please try again later`
-        }
+        error: { message: `Too many ${action} attempts, please try again later` }
       });
     }
 
@@ -280,18 +256,12 @@ export const checkSubscription = (feature) => {
       if (!req.user) {
         return res.status(401).json({
           success: false,
-          error: {
-            message: 'Authentication required'
-          }
+          error: { message: 'Authentication required' }
         });
       }
 
-      // Admin bypass
-      if (req.user.role === 'admin') {
-        return next();
-      }
+      if (req.user.role === 'admin') return next();
 
-      // Check subscription status
       const subscription = await mongoose.model('Subscription').findOne({
         user: req.user._id,
         status: 'active'
@@ -300,19 +270,14 @@ export const checkSubscription = (feature) => {
       if (!subscription) {
         return res.status(403).json({
           success: false,
-          error: {
-            message: 'Active subscription required'
-          }
+          error: { message: 'Active subscription required' }
         });
       }
 
-      // Check if user can use the feature
       if (!subscription.canUseFeature(feature)) {
         return res.status(403).json({
           success: false,
-          error: {
-            message: `Feature limit reached for ${feature}`
-          }
+          error: { message: `Feature limit reached for ${feature}` }
         });
       }
 
@@ -330,9 +295,9 @@ export const updateActivity = async (req, res, next) => {
       req.user.lastActivity = new Date();
       await req.user.save();
     } catch (error) {
-      // Don't block the request if activity update fails
       console.error('Failed to update user activity:', error);
     }
   }
   next();
 };
+

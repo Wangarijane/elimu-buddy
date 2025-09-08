@@ -1,0 +1,87 @@
+# Frontend Environment Variables
+# Copy this file to .env and fill in your actual values
+
+# API Configuration
+VITE_API_URL_LOCAL=http://localhost:5000/api
+VITE_API_URL_PROD=https://elimu-buddy.onrender.com/api
+VITE_API_TIMEOUT=30000
+
+# AI Chat Configuration
+VITE_AI_CHAT_API_URL=http://localhost:5000/api/chat  # New chat-specific endpoint
+VITE_AI_CHAT_RATE_LIMIT=10
+VITE_AI_CHAT_TIMEOUT=30000
+VITE_AI_CHAT_MAX_TOKENS=1000
+
+# App Configuration
+VITE_APP_NAME=ElimuBuddy
+VITE_APP_VERSION=1.0.0
+VITE_APP_DESCRIPTION=AI-powered learning companion for Kenyan CBC curriculum
+
+# Authentication
+VITE_AUTH_TOKEN_KEY=token
+VITE_AUTH_USER_KEY=user
+VITE_AUTH_REFRESH_INTERVAL=300000
+
+# M-Pesa Configuration (if needed on frontend)
+VITE_MPESA_CONSUMER_KEY=your_mpesa_consumer_key
+VITE_MPESA_CONSUMER_SECRET=your_mpesa_consumer_secret
+VITE_MPESA_BUSINESS_SHORT_CODE=your_business_short_code
+VITE_MPESA_PASSKEY=your_mpesa_passkey
+VITE_MPESA_ENVIRONMENT=sandbox
+
+# File Upload Configuration
+VITE_MAX_FILE_SIZE=5242880
+VITE_ALLOWED_FILE_TYPES=image/jpeg,image/png,image/gif,application/pdf
+VITE_UPLOAD_URL=http://localhost:5000/api/upload
+
+# Analytics & Monitoring
+VITE_ANALYTICS_ENABLED=false
+VITE_ANALYTICS_ID=your_analytics_id
+VITE_SENTRY_DSN=your_sentry_dsn
+
+# Feature Flags
+VITE_ENABLE_AI_CHAT=true
+VITE_ENABLE_EXPERT_CONNECTIONS=true
+VITE_ENABLE_MPESA_PAYMENTS=true
+VITE_ENABLE_CURRICULUM_BROWSER=true
+VITE_ENABLE_QUESTIONS_ANSWERS=true
+
+# Development & Debug
+VITE_DEBUG_MODE=false
+VITE_LOG_LEVEL=info
+VITE_ENABLE_MOCK_DATA=false
+
+# External Services
+VITE_EMAIL_SERVICE_URL=https://api.emailservice.com
+VITE_SMS_SERVICE_URL=https://api.smsservice.com
+VITE_PUSH_NOTIFICATION_KEY=your_push_notification_key
+
+# Security
+VITE_ENABLE_HTTPS_REDIRECT=false
+VITE_ENABLE_CSP=true
+VITE_ENABLE_HSTS=true
+
+# Performance
+VITE_ENABLE_SERVICE_WORKER=false
+VITE_ENABLE_PWA=false
+VITE_CACHE_DURATION=3600000
+
+# Internationalization
+VITE_DEFAULT_LOCALE=en
+VITE_SUPPORTED_LOCALES=en,sw
+VITE_FALLBACK_LOCALE=en
+
+# Social Login (if implemented)
+VITE_GOOGLE_CLIENT_ID=your_google_client_id
+VITE_FACEBOOK_APP_ID=your_facebook_app_id
+
+# WebSocket Configuration (for real-time features)
+VITE_WEBSOCKET_URL=ws://localhost:5000/ws
+VITE_WEBSOCKET_RECONNECT_INTERVAL=5000
+
+# CDN Configuration
+VITE_CDN_URL=https://cdn.elimubuddy.com
+VITE_ASSETS_URL=https://assets.elimubuddy.com
+
+# Environment
+NODE_ENV=development

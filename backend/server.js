@@ -1,10 +1,9 @@
-// backend/server.js
-
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
+dotenv.config();
 import mongoose from 'mongoose';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -24,9 +23,6 @@ import curriculumRoutes from './routes/curriculum.js';
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js';
 import { notFound } from './middleware/notFound.js';
-
-// Load environment variables
-dotenv.config();
 
 // Initialize Express
 const app = express();
@@ -61,7 +57,7 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // CORS configuration with allowlist (supports multiple origins)
-const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173,https://elimu-buddy.vercel.app')
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173,https://elimu-buddy.vercel.app,https://elimu-buddy.onrender.com')
   .split(',')
   .map((o) => o.trim());
 
@@ -167,6 +163,7 @@ const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   try {
+    console.log("JWT_SECRET:", process.env.JWT_SECRET);
     await connectDB();
     app.listen(PORT, () => {
       console.log(`🚀 ElimuBuddy Kenya Backend running on port ${PORT}`);

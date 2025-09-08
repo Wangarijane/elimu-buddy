@@ -28,6 +28,7 @@ interface AuthContextType {
   logout: () => void;
   register: (userData: any) => Promise<void>;
   isAuthenticated: boolean;
+  refreshAccessToken: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -60,11 +61,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const initializeAuth = async () => {
       const storedUser = localStorage.getItem('user');
       const storedToken = localStorage.getItem('token');
+      const storedRefreshToken = localStorage.getItem('refreshToken');
       
-      if (storedUser && storedToken) {
+      if (storedUser && storedToken && storedRefreshToken) {
         try {
           setUser(JSON.parse(storedUser));
           setToken(storedToken);
+          setRefreshToken(storedRefreshToken);
         } catch (error) {
           console.error('Error parsing stored user:', error);
           logout();
@@ -108,6 +111,37 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const refreshAccessToken = async () => {
+    try {
+      const response = await fetch(`${API_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${refreshToken}` // Send refresh token in Authorization header
+        },
+        body: JSON.stringify({}) // You might need to send the refresh token in the body instead
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Handle refresh token failure (e.g., redirect to login)
+        console.error('Failed to refresh token:', data.message || 'Failed to refresh token');
+        logout(); // Logout user if refresh fails
+        return false; // Indicate failure
+      }
+
+      const newAccessToken = data.data.accessToken;
+      setToken(newAccessToken);
+      localStorage.setItem('token', newAccessToken);
+      return true; // Indicate success
+    } catch (error) {
+      console.error('Error refreshing token:', error);
+      logout(); // Logout user on error
+      return false; // Indicate failure
+    }
+  };
+
   const register = async (userData: any) => {
     setIsLoading(true);
     try {
@@ -120,8 +154,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        const errorMessage = data.message || 
-                             (data.errors ? JSON.stringify(data.errors) : 'Registration failed');
+        const errorMessage = data.message ||
+          (data.errors ? JSON.stringify(data.errors) : 'Registration failed');
         throw new Error(errorMessage);
       }
 
@@ -153,6 +187,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     register,
     isAuthenticated: !!token,
+    refreshAccessToken
   };
 
   return (
@@ -161,3 +196,4 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+

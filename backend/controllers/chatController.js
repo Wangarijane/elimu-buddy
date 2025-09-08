@@ -16,14 +16,14 @@ export const createChat = async (req, res, next) => {
     // Check user's subscription for AI chat limits
     if (type === 'ai') {
       const subscription = await Subscription.findOne({
-        user: userId,
+        userId,
         status: { $in: ['active', 'trial'] }
       });
 
       if (!subscription) {
         // Free plan limits
         const dailyChats = await Chat.countDocuments({
-          user: userId,
+          userId,
           type: 'ai',
           createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
         });
@@ -39,7 +39,7 @@ export const createChat = async (req, res, next) => {
         const plan = subscription.plan;
         if (plan.limits.dailyAIQuestions !== -1) {
           const dailyChats = await Chat.countDocuments({
-            user: userId,
+            userId,
             type: 'ai',
             createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
           });
@@ -55,7 +55,7 @@ export const createChat = async (req, res, next) => {
     }
 
     const chat = new Chat({
-      user: userId,
+      userId,
       title: title || 'New Chat',
       subject,
       grade,
@@ -84,7 +84,7 @@ export const getUserChats = async (req, res, next) => {
     const userId = req.user.id;
     const { page = 1, limit = 20, type, status } = req.query;
 
-    const query = { user: userId };
+    const query = { userId };
     if (type) query.type = type;
     if (status) query.status = status;
 
@@ -133,7 +133,7 @@ export const getChat = async (req, res, next) => {
     }
 
     // Check if user owns this chat
-    if (chat.user.toString() !== userId) {
+    if (chat.userId.toString() !== userId) {
       return res.status(403).json({
         success: false,
         message: 'Access denied'
@@ -186,7 +186,7 @@ export const sendMessage = async (req, res, next) => {
     }
 
     // Check if user owns this chat
-    if (chat.user.toString() !== userId) {
+    if (chat.userId.toString() !== userId) {
       return res.status(403).json({
         success: false,
         message: 'Access denied'
@@ -203,10 +203,10 @@ export const sendMessage = async (req, res, next) => {
 
     // Create user message
     const userMessage = new Message({
-      chat: chatId,
-      sender: userId,
+      chatId,
+      userId,
       content,
-      type,
+      messageType: type,
       role: 'user'
     });
 
@@ -225,29 +225,33 @@ export const sendMessage = async (req, res, next) => {
         // Generate AI response using the AI utility
         const aiResult = await generateAIResponse(content, chat.subject, chat.grade);
         
-        // Extract the answer from the AI response
-        const aiAnswer = aiResult.answer || aiResult.response || 
-                         "Sorry, I couldn't find an answer that matches your question.";
-        
-        const aiMessage = new Message({
-          chat: chatId,
-          sender: 'ai',
-          content: aiAnswer,
-          type: 'text',
-          role: 'assistant'
-        });
+        if (aiResult.success) {
+          const aiAnswer = aiResult.answer || 
+            "I've processed your question, but couldn't generate a detailed response.";
+          
+          const aiMessage = new Message({
+            chatId,
+            userId: req.user.id, // or null/system ID if you prefer
+            content: aiAnswer,
+            messageType: 'text',
+            role: 'assistant'
+          });
 
-        await aiMessage.save();
+          await aiMessage.save();
 
-        // Update chat with AI message
-        chat.lastMessage = aiMessage._id;
-        chat.updatedAt = new Date();
-        await chat.save();
-        
-        aiResponse = {
-          content: aiAnswer,
-          messageId: aiMessage._id
-        };
+          // Update chat with AI message
+          chat.lastMessage = aiMessage._id;
+          chat.updatedAt = new Date();
+          await chat.save();
+
+          aiResponse = {
+            content: aiAnswer,
+            messageId: aiMessage._id
+          };
+        } else {
+          // Handle AI generation failure
+          console.error('AI response generation failed:', aiResult.error);
+        }
       } catch (aiError) {
         console.error('AI response generation failed:', aiError);
         // Continue without AI response
@@ -286,7 +290,7 @@ export const getAIResponse = async (req, res, next) => {
     }
 
     // Check if user owns this chat
-    if (chat.user.toString() !== userId) {
+    if (chat.userId.toString() !== userId) {
       return res.status(403).json({
         success: false,
         message: 'Access denied'
@@ -314,14 +318,14 @@ export const getAIResponse = async (req, res, next) => {
 
     // Check subscription limits
     const subscription = await Subscription.findOne({
-      user: userId,
+      userId,
       status: { $in: ['active', 'trial'] }
     });
 
     if (!subscription) {
       // Free plan limits
       const dailyAIRequests = await Message.countDocuments({
-        chat: { $in: await Chat.find({ user: userId, type: 'ai' }).distinct('_id') },
+        chat: { $in: await Chat.find({ userId, type: 'ai' }).distinct('_id') },
         role: 'user',
         createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
       });
@@ -337,7 +341,7 @@ export const getAIResponse = async (req, res, next) => {
       const plan = subscription.plan;
       if (plan.limits.dailyAIQuestions !== -1) {
         const dailyAIRequests = await Message.countDocuments({
-          chat: { $in: await Chat.find({ user: userId, type: 'ai' }).distinct('_id') },
+          chat: { $in: await Chat.find({ userId, type: 'ai' }).distinct('_id') },
           role: 'user',
           createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
         });
@@ -406,14 +410,14 @@ export const getDirectAIResponse = async (req, res, next) => {
 
     // Check subscription limits
     const subscription = await Subscription.findOne({
-      user: userId,
+      userId,
       status: { $in: ['active', 'trial'] }
     });
 
     if (!subscription) {
       // Free plan limits
       const dailyAIRequests = await Message.countDocuments({
-        chat: { $in: await Chat.find({ user: userId, type: 'ai' }).distinct('_id') },
+        chat: { $in: await Chat.find({ userId, type: 'ai' }).distinct('_id') },
         role: 'user',
         createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
       });
@@ -429,7 +433,7 @@ export const getDirectAIResponse = async (req, res, next) => {
       const plan = subscription.plan;
       if (plan.limits.dailyAIQuestions !== -1) {
         const dailyAIRequests = await Message.countDocuments({
-          chat: { $in: await Chat.find({ user: userId, type: 'ai' }).distinct('_id') },
+          chat: { $in: await Chat.find({ userId, type: 'ai' }).distinct('_id') },
           role: 'user',
           createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
         });
@@ -479,7 +483,7 @@ export const updateChat = async (req, res, next) => {
     }
 
     // Check if user owns this chat
-    if (chat.user.toString() !== userId) {
+    if (chat.userId.toString() !== userId) {
       return res.status(403).json({
         success: false,
         message: 'Access denied'
@@ -525,7 +529,7 @@ export const deleteChat = async (req, res, next) => {
     }
 
     // Check if user owns this chat
-    if (chat.user.toString() !== userId) {
+    if (chat.userId.toString() !== userId) {
       return res.status(403).json({
         success: false,
         message: 'Access denied'
@@ -565,7 +569,7 @@ export const archiveChat = async (req, res, next) => {
     }
 
     // Check if user owns this chat
-    if (chat.user.toString() !== userId) {
+    if (chat.userId.toString() !== userId) {
       return res.status(403).json({
         success: false,
         message: 'Access denied'
@@ -604,7 +608,7 @@ export const restoreChat = async (req, res, next) => {
     }
 
     // Check if user owns this chat
-    if (chat.user.toString() !== userId) {
+    if (chat.userId.toString() !== userId) {
       return res.status(403).json({
         success: false,
         message: 'Access denied'
@@ -685,11 +689,11 @@ export const getChatStats = async (req, res, next) => {
     const userId = req.user.id;
 
     const [totalChats, totalMessages, aiChats, groupChats, archivedChats] = await Promise.all([
-      Chat.countDocuments({ user: userId }),
+      Chat.countDocuments({ userIdId }),
       Message.countDocuments({ sender: userId }),
-      Chat.countDocuments({ user: userId, type: 'ai' }),
-      Chat.countDocuments({ user: userId, type: 'group' }),
-      Chat.countDocuments({ user: userId, status: 'archived' })
+      Chat.countDocuments({ userIdId, type: 'ai' }),
+      Chat.countDocuments({ userIdId, type: 'group' }),
+      Chat.countDocuments({ userIdId, status: 'archived' })
     ]);
 
     res.json({
@@ -729,7 +733,7 @@ export const exportChat = async (req, res, next) => {
     }
 
     // Check if user owns this chat
-    if (chat.user.toString() !== userId) {
+    if (chat.userId.toString() !== userId) {
       return res.status(403).json({
         success: false,
         message: 'Access denied'
@@ -863,7 +867,7 @@ export const rateAIResponse = async (req, res, next) => {
 
     // Check if user owns the chat
     const chat = await Chat.findById(message.chat);
-    if (!chat || chat.user.toString() !== userId) {
+    if (!chat || chat.userId.toString() !== userId) {
       return res.status(403).json({
         success: false,
         message: 'Access denied'
@@ -908,7 +912,7 @@ export const getChatInsights = async (req, res, next) => {
     }
 
     // Check if user owns this chat
-    if (chat.user.toString() !== userId) {
+    if (chat.userId.toString() !== userId) {
       return res.status(403).json({
         success: false,
         message: 'Access denied'
@@ -966,4 +970,6 @@ function calculateLearningProgress(messages) {
   
   return Math.min(100, Math.round((complexity / 100 + interactionDepth) * 50));
 }
+
+
 
