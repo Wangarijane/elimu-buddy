@@ -1,7 +1,7 @@
 # 🚀 ElimuBuddy – AI + Human Hybrid Study Companion  
 
-[![Live Demo – Vercel](https://img.shields.io/badge/Demo-Live-green?style=for-the-badge&logo=vercel)](https://elimu-buddy.vercel.app/)  
-[![Backend API – Render](https://img.shields.io/badge/API-Docs-blue?style=for-the-badge&logo=render)](https://elimu-buddy.onrender.com/api)  
+[![Live Demo – Vercel](https://img.shields.io/badge/Demo-Live-red?style=for-the-badge&colorA=000000&colorB=006600&logo=vercel)](https://elimu-buddy.vercel.app/)
+[![Backend API – Render](https://img.shields.io/badge/API-Docs-green?style=for-the-badge&colorA=BB1919&colorB=000000&logo=render)](https://elimu-buddy.onrender.com/api)  
 
 **Hackathon:** Vibe Coding 2025 | **SDG Goal:** 4 – Quality Education  
 
